@@ -835,38 +835,44 @@ if(WIN32)
       /delayload:IPHLPAPI.dll
     )
   endif()
-elseif(APPLE)
+endif()
+
+if(APPLE)
   target_link_options(${bun} PUBLIC
     -dead_strip
     -dead_strip_dylibs
     -Wl,-stack_size,0x1200000
     -fno-keep-static-consts
   )
-else()
-  if(ARCH STREQUAL "aarch64")
-    target_link_options(${bun} PUBLIC
-      -Wl,--wrap=fcntl64
-      -Wl,--wrap=statx
-    )
-  elseif(ARCH STREQUAL "x64")
-    target_link_options(${bun} PUBLIC
-      -Wl,--wrap=fcntl
-      -Wl,--wrap=fcntl64
-      -Wl,--wrap=fstat
-      -Wl,--wrap=fstat64
-      -Wl,--wrap=fstatat
-      -Wl,--wrap=fstatat64
-      -Wl,--wrap=lstat
-      -Wl,--wrap=lstat64
-      -Wl,--wrap=mknod
-      -Wl,--wrap=mknodat
-      -Wl,--wrap=stat
-      -Wl,--wrap=stat64
-      -Wl,--wrap=statx
-    )
-  endif()
+endif()
 
+if(LINUX)
   if(NOT ABI STREQUAL "musl")
+    if(ARCH STREQUAL "aarch64")
+      target_link_options(${bun} PUBLIC
+        -Wl,--wrap=fcntl64
+        -Wl,--wrap=statx
+      )
+    endif()
+    
+    if(ARCH STREQUAL "x64")
+      target_link_options(${bun} PUBLIC
+        -Wl,--wrap=fcntl
+        -Wl,--wrap=fcntl64
+        -Wl,--wrap=fstat
+        -Wl,--wrap=fstat64
+        -Wl,--wrap=fstatat
+        -Wl,--wrap=fstatat64
+        -Wl,--wrap=lstat
+        -Wl,--wrap=lstat64
+        -Wl,--wrap=mknod
+        -Wl,--wrap=mknodat
+        -Wl,--wrap=stat
+        -Wl,--wrap=stat64
+        -Wl,--wrap=statx
+      )
+    endif()
+
     target_link_options(${bun} PUBLIC
       -Wl,--wrap=cosf
       -Wl,--wrap=exp
